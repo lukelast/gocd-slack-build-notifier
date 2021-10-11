@@ -15,6 +15,7 @@ public class PipelineRule {
     private String nameRegex;
     private String stageRegex;
     private String groupRegex;
+    private String team;
     private String channel;
     private String webhookUrl;
     private Set<String> owners = new HashSet<>();
@@ -27,6 +28,7 @@ public class PipelineRule {
         this.nameRegex = copy.nameRegex;
         this.stageRegex = copy.stageRegex;
         this.groupRegex = copy.groupRegex;
+        this.team = copy.team;
         this.channel = copy.channel;
         this.status = copy.status;
         this.owners = copy.owners;
@@ -64,6 +66,16 @@ public class PipelineRule {
         this.stageRegex = stageRegex;
         return this;
     }
+
+    public String getTeam() {
+        return team;
+    }
+
+    public PipelineRule setTeam(String team) {
+        this.team = team;
+        return this;
+    }
+
 
     public String getChannel() {
         return channel;
@@ -128,26 +140,26 @@ public class PipelineRule {
 
         PipelineRule that = (PipelineRule) o;
 
-        if (channel != null ? !channel.equals(that.channel) : that.channel != null) return false;
         if (nameRegex != null ? !nameRegex.equals(that.nameRegex) : that.nameRegex != null) return false;
-        if (groupRegex != null ? !groupRegex.equals(that.groupRegex) : that.groupRegex != null) return false;
         if (stageRegex != null ? !stageRegex.equals(that.stageRegex) : that.stageRegex != null) return false;
-        if (status != null ? !status.equals(that.status) : that.status != null) return false;
-        if (owners != null ? !owners.equals(that.owners) : that.owners != null) return false;
+        if (groupRegex != null ? !groupRegex.equals(that.groupRegex) : that.groupRegex != null) return false;
+        if (team != null ? !team.equals(that.team) : that.team != null) return false;
+        if (channel != null ? !channel.equals(that.channel) : that.channel != null) return false;
         if (webhookUrl != null ? !webhookUrl.equals(that.webhookUrl) : that.webhookUrl != null) return false;
-
-        return true;
+        if (owners != null ? !owners.equals(that.owners) : that.owners != null) return false;
+        return status != null ? status.equals(that.status) : that.status == null;
     }
 
     @Override
     public int hashCode() {
         int result = nameRegex != null ? nameRegex.hashCode() : 0;
-        result = 31 * result + (groupRegex != null ? groupRegex.hashCode() : 0);
         result = 31 * result + (stageRegex != null ? stageRegex.hashCode() : 0);
+        result = 31 * result + (groupRegex != null ? groupRegex.hashCode() : 0);
+        result = 31 * result + (team != null ? team.hashCode() : 0);
         result = 31 * result + (channel != null ? channel.hashCode() : 0);
-        result = 31 * result + (status != null ? status.hashCode() : 0);
-        result = 31 * result + (owners != null ? owners.hashCode() : 0);
         result = 31 * result + (webhookUrl != null ? webhookUrl.hashCode() : 0);
+        result = 31 * result + (owners != null ? owners.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
         return result;
     }
 
@@ -155,12 +167,13 @@ public class PipelineRule {
     public String toString() {
         return "PipelineRule{" +
                 "nameRegex='" + nameRegex + '\'' +
-                ", groupRegex='" + groupRegex + '\'' +
                 ", stageRegex='" + stageRegex + '\'' +
+                ", groupRegex='" + groupRegex + '\'' +
+                ", team='" + team + '\'' +
                 ", channel='" + channel + '\'' +
-                ", status=" + status +
+                ", webhookUrl='" + webhookUrl + '\'' +
                 ", owners=" + owners +
-                ", webhookUrl=" + webhookUrl +
+                ", status=" + status +
                 '}';
     }
 
@@ -201,8 +214,11 @@ public class PipelineRule {
         return pipelineRule;
     }
 
-    public static PipelineRule fromConfig(Config config, String channel) {
+    public static PipelineRule fromConfig(Config config, String team, String channel) {
         PipelineRule pipelineRule = fromConfig(config);
+        if (StringUtils.isEmpty(pipelineRule.getTeam())) {
+            pipelineRule.setTeam(team);
+        }
         if (StringUtils.isEmpty(pipelineRule.getChannel())) {
             pipelineRule.setChannel(channel);
         }
@@ -221,6 +237,10 @@ public class PipelineRule {
 
         if (isEmpty(pipelineRule.getStageRegex())) {
             ruleToReturn.setStageRegex(defaultRule.getStageRegex());
+        }
+
+        if(isEmpty(pipelineRule.getTeam())){
+            ruleToReturn.setTeam(defaultRule.getTeam());
         }
 
         if (isEmpty(pipelineRule.getChannel())) {

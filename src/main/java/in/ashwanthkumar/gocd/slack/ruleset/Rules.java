@@ -22,6 +22,7 @@ public class Rules {
 
     private boolean enabled;
     private String webHookUrl;
+    private String team;
     private String slackChannel;
     private String slackDisplayName;
     private String slackUserIconURL;
@@ -55,6 +56,15 @@ public class Rules {
 
     public Rules setWebHookUrl(String webHookUrl) {
         this.webHookUrl = webHookUrl;
+        return this;
+    }
+
+    public String getTeam() {
+        return team;
+    }
+
+    public Rules setTeam(String team) {
+        this.team = team;
         return this;
     }
 
@@ -215,6 +225,12 @@ public class Rules {
         boolean isEnabled = config.getBoolean("enabled");
 
         String webhookUrl = config.getString("webhookUrl");
+
+        String team = null;
+        if (config.hasPath("team")) {
+            team = config.getString("team");
+        }
+
         String channel = null;
         if (config.hasPath("channel")) {
             channel = config.getString("channel");
@@ -282,7 +298,7 @@ public class Rules {
             }
         }
 
-        final PipelineRule defaultRule = PipelineRule.fromConfig(config.getConfig("default"), channel);
+        final PipelineRule defaultRule = PipelineRule.fromConfig(config.getConfig("default"), team, channel);
 
         List<PipelineRule> pipelineRules = Lists.map((List<Config>) config.getConfigList("pipelines"), new Function<Config, PipelineRule>() {
             public PipelineRule apply(Config input) {
@@ -293,6 +309,7 @@ public class Rules {
         Rules rules = new Rules()
                 .setEnabled(isEnabled)
                 .setWebHookUrl(webhookUrl)
+                .setTeam(team)
                 .setSlackChannel(channel)
                 .setSlackDisplayName(displayName)
                 .setSlackUserIcon(iconURL)
