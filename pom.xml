@@ -59,6 +59,12 @@
             <version>2.7</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.microsoft.graph</groupId>
+            <artifactId>microsoft-graph</artifactId>
+            <version>5.4.0</version>
+        </dependency>
+
         <!-- test dependencies -->
         <dependency>
             <groupId>junit</groupId>
